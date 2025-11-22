@@ -1,3 +1,4 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 
 class Paletka
@@ -37,19 +38,19 @@ private:
 
 
 
-void Paletka::moveLeft()
+inline void Paletka::moveLeft()
 {
     x -= predkosc;
     shape.setPosition(x, y);
 }
 
-void Paletka::moveRight()
+inline void Paletka::moveRight()
 {
     x += predkosc;
     shape.setPosition(x, y);
 }
 
-void Paletka::clampToBounds(float width)
+inline void Paletka::clampToBounds(float width)
 {
     const float half = szerokosc / 2.f;
 
@@ -60,16 +61,15 @@ void Paletka::clampToBounds(float width)
         x = width - half;
     }
 
-
     shape.setPosition(x, y);
 }
 
-void Paletka::draw(sf::RenderTarget& target)
+inline void Paletka::draw(sf::RenderTarget& target)
 {
     target.draw(shape);
 }
 
-float Paletka::getX() const { return x; }
-float Paletka::getY() const { return y; }
-float Paletka::getSzerokosc() const { return szerokosc; }
-float Paletka::getWysokosc() const { return wysokosc; }
+inline float Paletka::getX() const { return x; }
+inline float Paletka::getY() const { return y; }
+inline float Paletka::getSzerokosc() const { return szerokosc; }
+inline float Paletka::getWysokosc() const { return wysokosc; }

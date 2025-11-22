@@ -27,7 +27,7 @@ void Stone::trafienie()
 
 void Stone::aktualizujKolor()
 {
-    if (m_punktyZycia >= 0 && m_punktyZycia < static_cast<int>(m_colorLUT.size())) {
+    if (m_punktyZycia >= 0 && m_punktyZycia < m_colorLUT.size()) {
         this->setFillColor(m_colorLUT[static_cast<std::size_t>(m_punktyZycia)]);
     } else {
         this->setFillColor(sf::Color::Transparent);

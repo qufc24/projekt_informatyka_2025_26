@@ -1,3 +1,5 @@
+#pragma once
+
 #include <SFML/Graphics.hpp>
 #include "paletka.h"
 #include "stone.h"
@@ -74,16 +76,11 @@ void Pilka::collideWalls(float widht, float height){
 }
 
 bool Pilka::collidePaddle(const Paletka& p){
-    const float palX = p.getX();
-    const float palY = p.getY();
-    const float palW = p.getSzerokosc();
-    const float palH = p.getWysokosc();
-
-    if ( x < palX - palW / 2.f || x > palX + palW / 2.f){
+    if ( x < p.getX() - p.getSzerokosc() / 2.f || x > p.getX() + p.getSzerokosc() / 2.f){
         return false;
     }
-
-    const float palTop = palY - palH / 2.f;
+    //Dla czytelności nowa zmienna lokalna
+    const float palTop = p.getY() - p.getWysokosc() / 2.f;
 
     if ((y + radius) >= palTop && (y - radius) < palTop){
         vy = -std::abs(vy);
@@ -99,20 +96,13 @@ void Pilka::draw(sf::RenderTarget& target){
 }
 
 bool Pilka::collideBlock(Stone& blk){
-    const float blkX = blk.getX();
-    const float blkY = blk.getY();
-    const float blkW = blk.getSzerokosc();
-    const float blkH = blk.getWysokosc();
-
-    if (x - radius <= blkX + blkW / 2.f && x + radius >= blkX - blkW / 2.f){
-        if (y + radius >= blkY - blkH / 2.f && y - radius <= blkY + blkH / 2.f){
+    if (x - radius <= blk.getX() + blk.getSzerokosc() / 2.f && x + radius >= blk.getX() - blk.getSzerokosc() / 2.f){
+        if (y + radius >= blk.getY() - blk.getWysokosc() / 2.f && y - radius <= blk.getY() + blk.getWysokosc() / 2.f){
             return true;
         }
     }
     return false;
 }
-
-
 
 float Pilka::getX() const { return x; }
 float Pilka::getY() const { return y; }
