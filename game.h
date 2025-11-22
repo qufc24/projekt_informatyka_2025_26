@@ -21,13 +21,6 @@ private:
     void sterowanie();
     void blockRender();
 
-    sf::RenderWindow m_window;
-    sf::Clock m_deltaClock;
-
-    Paletka m_paletka;
-    Pilka   m_pilka;
-    std::vector<Stone> m_bloki;
-
     float m_WIDTH;
     float m_HEIGHT;
     float m_FrameLimit;
@@ -35,6 +28,13 @@ private:
     int   m_ILOSC_WIERSZY;
     float m_ROZMIAR_BLOKU_X;
     float m_ROZMIAR_BLOKU_Y;
+
+    sf::RenderWindow m_window;
+    sf::Clock m_deltaClock;
+
+    Paletka m_paletka;
+    Pilka   m_pilka;
+    std::vector<Stone> m_bloki;
 
     int m_dtCounter = 0;
 };
