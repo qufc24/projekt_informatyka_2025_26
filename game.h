@@ -22,9 +22,8 @@ private:
     void blockRender();
 
     sf::RenderWindow m_window;
-    sf::Clock m_deltaClock; // used to compute real delta time passed to update()
+    sf::Clock m_deltaClock;
 
-    // Game entities
     Paletka m_paletka;
     Pilka   m_pilka;
     std::vector<Stone> m_bloki;

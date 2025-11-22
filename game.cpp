@@ -14,22 +14,17 @@ Game::Game()
       m_paletka(m_WIDTH / 2.f, m_HEIGHT - 40.f, 100.f, 20.f, 8.f),
       m_pilka(m_WIDTH / 2.f, m_HEIGHT / 2.f - 40.f, 4, 3, 8)
 {
-    // ustaw limit klatek
     m_window.setFramerateLimit(static_cast<unsigned>(m_FrameLimit));
 
-    // przygotuj bloki
     blockRender();
 
-    // restart zegara na start
     m_deltaClock.restart();
 }
 
 void Game::run()
 {
-    // główna pętla gry
     while (m_window.isOpen())
     {
-        // oblicz rzeczywisty dt
         sf::Time dt = m_deltaClock.restart();
 
         processEvents();
@@ -52,15 +47,10 @@ void Game::processEvents()
 
 void Game::update(sf::Time dt)
 {
-    // Aktualizacja pozycji piłki (obecna implementacja Pilka::move nie używa dt,
-    // więc wywołujemy istniejącą metodę; dt jest przekazane dla przyszłych rozszerzeń)
     m_pilka.move();
 
-    // Sprawdzenie czy piłka wypadła poza ekran (przegrana)
-    if (m_pilka.getY() - m_pilka.getRadius() > m_WIDTH /* mistake? original used HEIGHT */)
+    if (m_pilka.getY() - m_pilka.getRadius() > m_WIDTH)
     {
-        // Poprawka: warunek powinien porównywać do wysokości okna
-        // Jednak aby nie modyfikować semantyki innych modułów, sprawdzamy względem m_HEIGHT
     }
     if (m_pilka.getY() - m_pilka.getRadius() > m_HEIGHT)
     {
@@ -69,7 +59,6 @@ void Game::update(sf::Time dt)
         return;
     }
 
-    // Kolizje
     m_pilka.collideWalls(m_WIDTH, m_HEIGHT);
 
     if (m_pilka.collidePaddle(m_paletka))
@@ -87,7 +76,6 @@ void Game::update(sf::Time dt)
         }
     }
 
-    // Usuń zniszczone bloki
     m_bloki.erase(
         std::remove_if(m_bloki.begin(), m_bloki.end(), [](const Stone &s) { return s.isDestroyed(); }),
         m_bloki.end());
@@ -101,7 +89,7 @@ void Game::blockRender()
         for (int x = 0; x < m_ILOSC_KOLUMN; ++x)
         {
             float posX = x * (m_ROZMIAR_BLOKU_X + 2.f);
-            float posY = y * (m_ROZMIAR_BLOKU_Y + 2.f); // offset from top
+            float posY = y * (m_ROZMIAR_BLOKU_Y + 2.f);
             int L = (y < 1) ? 3 : (y < 3) ? 2 : 1;
             m_bloki.emplace_back(sf::Vector2f(posX, posY), sf::Vector2f(m_ROZMIAR_BLOKU_X, m_ROZMIAR_BLOKU_Y), L);
         }
