@@ -1,3 +1,4 @@
+#pragma once
 #include "stone.h"
 #include <array>
 
@@ -53,14 +54,12 @@ const std::array<sf::Color, 4> Stone::m_colorLUT = {
     sf::Color::Blue         // L = 3
 };
 
-// --- getters for Pilka::collideBlock ---
+
 float Stone::getX() const {
-    // sf::RectangleShape::getPosition() returns top-left; convert to center x
     return this->getPosition().x + this->getSize().x / 2.f;
 }
 
 float Stone::getY() const {
-    // convert top-left y to center y
     return this->getPosition().y + this->getSize().y / 2.f;
 }
 
@@ -70,4 +69,8 @@ float Stone::getSzerokosc() const {
 
 float Stone::getWysokosc() const {
     return this->getSize().y;
+}
+
+float Stone::getHP() const {
+    return m_punktyZycia;
 }

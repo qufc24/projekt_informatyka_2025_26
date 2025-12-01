@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 
-#define MAX_LICZBA_POZIOMOW 3
+#define MAX_LICZBA_POZIOMOW 4
 
 // Menu class - header + inline implementations.
 // NOTE: This header no longer contains a main() function or any top-level execution code.
@@ -38,15 +38,11 @@ public:
 
 
 // Konstruktor - ustawia teksty menu i pozycje
-inline Menu::Menu(float width, float height)
+Menu::Menu(float width, float height)
 {
     // Spróbuj kilku standardowych ścieżek do czcionki
     const std::vector<std::string> candidates = {
         "arial.ttf",
-        "resources/arial.ttf",
-        "fonts/arial.ttf",
-        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-        "C:/Windows/Fonts/arial.ttf"
     };
 
     for (const auto& path : candidates)
@@ -87,13 +83,18 @@ inline Menu::Menu(float width, float height)
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Ostatnie wyniki");
+    menu[1].setString("Wczytaj");
     menu[1].setPosition(sf::Vector2f(width / 3.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 2.f));
 
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Wyjscie");
+    menu[2].setString("Ostatnie wyniki");
     menu[2].setPosition(sf::Vector2f(width / 3.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 3.f));
+
+    menu[3].setFont(font);
+    menu[3].setFillColor(sf::Color::White);
+    menu[3].setString("Wyjscie");
+    menu[3].setPosition(sf::Vector2f(width / 3.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 4.f));
 
     // Ensure the initially selected item is styled
     if (selectedItem >= 0 && selectedItem < MAX_LICZBA_POZIOMOW)
@@ -104,7 +105,7 @@ inline Menu::Menu(float width, float height)
 }
 
 // rysowanie menu w biezacym oknie
-inline void Menu::draw(sf::RenderWindow &window)
+void Menu::draw(sf::RenderWindow &window)
 {
     if (fontLoaded)
     {
@@ -125,7 +126,7 @@ inline void Menu::draw(sf::RenderWindow &window)
     }
 }
 
-inline void Menu::przesunG()
+void Menu::przesunG()
 {
     if (selectedItem >= 0 && selectedItem < MAX_LICZBA_POZIOMOW)
     {
@@ -139,7 +140,7 @@ inline void Menu::przesunG()
     }
 }
 
-inline void Menu::przesunD()
+void Menu::przesunD()
 {
     if (selectedItem >= 0 && selectedItem < MAX_LICZBA_POZIOMOW)
     {

@@ -77,6 +77,21 @@ bool Pilka::collideBlock(Stone& blk){
 
 float Pilka::getX() const { return x; }
 float Pilka::getY() const { return y; }
+sf::Vector2f Pilka::getPosition() const { return sf::Vector2f(x, y); }
 float Pilka::getVx() const { return vx; }
 float Pilka::getVy() const { return vy; }
+sf::Vector2f Pilka::getVelocity() const { return sf::Vector2f(vx, vy); }
 float Pilka::getRadius() const { return radius; }
+
+void Pilka::setPosition(const sf::Vector2f& pos)
+{
+    x = pos.x;
+    y = pos.y;
+    shape.setPosition(x, y);
+}
+
+void Pilka::setVelocity(const sf::Vector2f& vel)
+{
+    vx = vel.x;
+    vy = vel.y;
+}

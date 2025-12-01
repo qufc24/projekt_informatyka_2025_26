@@ -1,4 +1,9 @@
+
+#pragma once
+
 #include "game.h"
+#include "save.h"
+#include <SFML/System/Vector2.hpp>
 #include <algorithm>
 #include <iostream>
 
@@ -10,39 +15,36 @@ Game::Game()
       m_ILOSC_WIERSZY(5),
       m_ROZMIAR_BLOKU_X(60.f),
       m_ROZMIAR_BLOKU_Y(20.f),
-      // initialize game objects with same parameters as before
+
       m_paletka(m_WIDTH / 2.f, m_HEIGHT - 40.f, 100.f, 20.f, 8.f),
       m_pilka(m_WIDTH / 2.f, m_HEIGHT / 2.f - 40.f, 4, 3, 8),
       m_dtCounter(0),
       m_gameOver(false)
 {
-    // Ensure internal layout uses the known window size; this will (re)compute block layout
-    // and position paddle/ball appropriately for the current playfield size.
+
     setWindowSize(m_WIDTH, m_HEIGHT);
 }
 
 void Game::setWindowSize(float width, float height)
 {
-    // Update internal playfield size used for layout calculations.
+
     m_WIDTH = width;
     m_HEIGHT = height;
 
-    // Recreate paddle and ball so their positions/sizes are consistent with the new window size.
-    // (This mirrors construction used elsewhere; if Paletka/Pilka support setters, those could be used instead.)
+
     m_paletka = Paletka(m_WIDTH / 2.f, m_HEIGHT - 40.f, 100.f, 20.f, 8.f);
     m_pilka = Pilka(m_WIDTH / 2.f, m_HEIGHT / 2.f - 40.f, 4, 3, 8);
 
-    // Rebuild blocks layout for the new size
     blockRender();
 }
 
 void Game::reset()
 {
-    // Reset positions and state to start a new game
+
     m_gameOver = false;
     m_dtCounter = 0;
 
-    // Reset paddle and ball positions
+
     m_paletka = Paletka(m_WIDTH / 2.f, m_HEIGHT - 40.f, 100.f, 20.f, 8.f);
     m_pilka = Pilka(m_WIDTH / 2.f, m_HEIGHT / 2.f - 40.f, 4, 3, 8);
 
@@ -54,10 +56,10 @@ void Game::update(sf::Time dt)
     if (m_gameOver)
         return;
 
-    // Move ball according to its internal velocity
+
     m_pilka.move();
 
-    // If ball goes below the bottom of the play area, mark game over.
+
     if (m_pilka.getY() - m_pilka.getRadius() > m_HEIGHT)
     {
         std::cout << "MISS! KONIEC GRY\n";
@@ -65,16 +67,15 @@ void Game::update(sf::Time dt)
         return;
     }
 
-    // Keep ball within walls (left/right/top/bottom)
     m_pilka.collideWalls(m_WIDTH, m_HEIGHT);
 
-    // Paddle collision
+
     if (m_pilka.collidePaddle(m_paletka))
     {
         std::cout << "HIT PADDLE\n";
     }
 
-    // Block collisions
+
     for (auto &blk : m_bloki)
     {
         if (!blk.isDestroyed() && m_pilka.collideBlock(blk))
@@ -85,23 +86,20 @@ void Game::update(sf::Time dt)
         }
     }
 
-    // Remove destroyed blocks
+
     m_bloki.erase(
         std::remove_if(m_bloki.begin(), m_bloki.end(), [](const Stone &s) { return s.isDestroyed(); }),
         m_bloki.end());
 
-    // Player controls (kept here so update handles per-frame input-based movement)
+
     sterowanie();
 
-    // Optional debug counter
+
     debug();
 }
 
 void Game::render(sf::RenderTarget& target)
 {
-    // Do not clear or display the target here; main is responsible for that.
-    // Draw game objects in the expected order.
-    // If you want a background color, main should clear the window with that color.
     m_paletka.draw(target);
     m_pilka.draw(target);
     for (const auto &blk : m_bloki)
@@ -114,19 +112,16 @@ void Game::blockRender()
 {
     m_bloki.clear();
 
-    // Spacing between blocks (in pixels)
+
     const float spacing = 2.f;
 
-    // Decide how much vertical space the blocks should occupy.
-    // Use the upper portion of the window; for example 40% of the total height.
-    // You can adjust the 0.4f factor to increase/decrease the occupied height.
+
     float upperHeight = m_HEIGHT * 0.40f;
 
-    // Compute block size so that columns fill the full width (taking spacing into account)
     float blockW = (m_WIDTH - (m_ILOSC_KOLUMN - 1) * spacing) / static_cast<float>(m_ILOSC_KOLUMN);
     float blockH = (upperHeight - (m_ILOSC_WIERSZY - 1) * spacing) / static_cast<float>(m_ILOSC_WIERSZY);
 
-    // Safety clamps to avoid degenerate sizes
+
     if (blockW < 4.f) blockW = 4.f;
     if (blockH < 4.f) blockH = 4.f;
 
@@ -163,4 +158,32 @@ void Game::sterowanie()
         m_paletka.moveRight();
     }
     m_paletka.clampToBounds(m_WIDTH);
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+    {
+        Save s;
+        s.capture(m_paletka, m_pilka, m_bloki);
+        s.saveToFile("save.txt");
+        std::cout << "Zapisano stan gry do pliku save.txt" << std::endl;
+    }
+}
+
+
+void Game::applySave(const Save& state)
+{
+    m_paletka.setPosition(state.getPaddlePosition());
+    m_pilka.setPosition(state.getBallPosition());
+    m_pilka.setVelocity(state.getBallVelocity());
+    m_bloki.clear();
+
+    sf::Vector2f size(m_WIDTH, m_HEIGHT);
+    const float spacing = 2.f;
+    float upperHeight = m_HEIGHT * 0.40f;
+    float blockW = (m_WIDTH - (m_ILOSC_KOLUMN - 1) * spacing) / static_cast<float>(m_ILOSC_KOLUMN);
+    float blockH = (upperHeight - (m_ILOSC_WIERSZY - 1) * spacing) / static_cast<float>(m_ILOSC_WIERSZY);
+
+    for (const auto& data : state.getBlocks())
+    {
+        // Use the saved block position and size directly when recreating blocks
+        m_bloki.emplace_back(sf::Vector2f(data.x, data.y), sf::Vector2f(data.w, data.h), data.hp);
+    }
 }

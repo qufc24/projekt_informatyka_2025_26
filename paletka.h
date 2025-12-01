@@ -1,3 +1,4 @@
+#pragma once
 #include <SFML/Graphics.hpp>
 
 class Paletka
@@ -23,8 +24,14 @@ public:
 
     float getX() const;
     float getY() const;
+    sf::Vector2f getPosition() const;
     float getSzerokosc() const;
     float getWysokosc() const;
+
+    // New setters so saved state can be applied
+    void setPosition(const sf::Vector2f& pos);
+    void setX(float nx);
+    void setY(float ny);
 
 private:
     float x;
@@ -34,7 +41,6 @@ private:
     float predkosc;
     sf::RectangleShape shape;
 };
-
 
 
 inline void Paletka::moveLeft()
@@ -70,5 +76,25 @@ inline void Paletka::draw(sf::RenderTarget& target)
 
 inline float Paletka::getX() const { return x; }
 inline float Paletka::getY() const { return y; }
+inline sf::Vector2f Paletka::getPosition() const { return sf::Vector2f(x, y); }
 inline float Paletka::getSzerokosc() const { return szerokosc; }
 inline float Paletka::getWysokosc() const { return wysokosc; }
+
+inline void Paletka::setPosition(const sf::Vector2f& pos)
+{
+    x = pos.x;
+    y = pos.y;
+    shape.setPosition(x, y);
+}
+
+inline void Paletka::setX(float nx)
+{
+    x = nx;
+    shape.setPosition(x, y);
+}
+
+inline void Paletka::setY(float ny)
+{
+    y = ny;
+    shape.setPosition(x, y);
+}

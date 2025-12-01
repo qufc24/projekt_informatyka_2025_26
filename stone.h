@@ -16,6 +16,7 @@ public:
     float getY() const;
     float getSzerokosc() const;
     float getWysokosc() const;
+    float getHP() const;
 
 private:
     int m_punktyZycia;

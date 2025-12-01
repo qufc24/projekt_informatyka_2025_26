@@ -1,20 +1,21 @@
 #include <SFML/Graphics.hpp>
 #include "menu.h"
 #include "game.h"
+#include "save.h"
 
 enum class GameState { Menu, Playing, Scores, Exiting };
 
 int main()
 {
-    // Create window and resources
+
     sf::RenderWindow window(sf::VideoMode(640, 480), "Arkanoid");
     window.setFramerateLimit(60);
 
     Menu menu(window.getSize().x, window.getSize().y);
     Game game;
     GameState currentState = GameState::Menu;
+    Save save;
 
-    // Clocks for delta time and simple key debouncing for the menu
     sf::Clock deltaClock;
     sf::Clock keyClock;
     const sf::Int32 keyDebounceMs = 150;
@@ -23,23 +24,22 @@ int main()
     {
         sf::Time dt = deltaClock.restart();
 
-        // Event handling
         sf::Event event;
         while (window.pollEvent(event))
         {
-            // Global events
+
             if (event.type == sf::Event::Closed)
             {
                 window.close();
                 break;
             }
 
-            // State-specific input handling
+
             if (currentState == GameState::Menu)
             {
                 if (event.type == sf::Event::KeyPressed)
                 {
-                    // Debounce navigation keys so holding doesn't skip too fast
+
                     if (event.key.code == sf::Keyboard::Up || event.key.code == sf::Keyboard::Down)
                     {
                         if (keyClock.getElapsedTime().asMilliseconds() > keyDebounceMs)
@@ -57,20 +57,28 @@ int main()
                         int sel = menu.getSelectedItem();
                         if (sel == 0)
                         {
-                            // Start new game
-                            game.reset(); // reset state if available
+
+                            game.reset();
                             currentState = GameState::Playing;
-                        }
-                        else if (sel == 1)
-                        {
-                            // Scores - not implemented, keep in menu or switch to Scores state
-                            currentState = GameState::Scores;
                         }
                         else if (sel == 2)
                         {
-                            // Exit
-                            currentState = GameState::Exiting;
+
+                            currentState = GameState::Scores;
+                        }
+                        else if (sel == 3)
+                        {
+                            currentState = GameState::Playing;
                             window.close();
+                        }
+                        else if (sel == 1)
+                        {
+                            if (save.loadFromFile("save.txt")) {
+                                game.applySave(save);
+                                currentState = GameState::Playing;
+                            } else {
+                                currentState = GameState::Menu;
+                            }
                         }
                     }
                 }
@@ -85,20 +93,17 @@ int main()
             }
             else if (currentState == GameState::Scores)
             {
-                // Allow returning to menu with Escape or Enter
                 if (event.type == sf::Event::KeyPressed &&
                     (event.key.code == sf::Keyboard::Escape || event.key.code == sf::Keyboard::Enter))
                 {
                     currentState = GameState::Menu;
                 }
             }
-        } // end event loop
+        }
 
-        // Update logic
         if (currentState == GameState::Playing)
         {
             game.update(dt);
-            // if game finished, return to menu (or handle differently)
             if (game.isGameOver())
             {
                 currentState = GameState::Menu;
@@ -118,8 +123,6 @@ int main()
         }
         else if (currentState == GameState::Scores)
         {
-            // Simple placeholder: reuse menu drawing or render scores screen if implemented.
-            // For now draw the menu so window is not empty.
             menu.draw(window);
         }
 
