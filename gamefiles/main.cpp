@@ -2,8 +2,9 @@
 #include "menu.h"
 #include "game.h"
 #include "save.h"
+#include "gameover.h"
 
-enum class GameState { Menu, Playing, Scores, Exiting };
+enum class GameState { Menu, Playing, Scores, Exiting, GameOver };
 
 int main()
 {
@@ -15,6 +16,7 @@ int main()
     Game game;
     GameState currentState = GameState::Menu;
     Save save;
+    Gameover gameover(window.getSize().x, window.getSize().y, game, game.getScore());
 
     sf::Clock deltaClock;
     sf::Clock keyClock;
@@ -63,17 +65,11 @@ int main()
                         }
                         else if (sel == 2)
                         {
-
-                            currentState = GameState::Scores;
-                        }
-                        else if (sel == 3)
-                        {
-                            currentState = GameState::Playing;
                             window.close();
                         }
                         else if (sel == 1)
                         {
-                            if (save.loadFromFile("save.txt")) {
+                            if (save.loadFromFile("./data/save.txt")) {
                                 game.applySave(save);
                                 currentState = GameState::Playing;
                             } else {
@@ -99,14 +95,39 @@ int main()
                     currentState = GameState::Menu;
                 }
             }
+            else if (currentState == GameState::GameOver)
+            {
+                if (event.type == sf::Event::KeyPressed)
+                {
+                    if (event.key.code == sf::Keyboard::Right)
+                        gameover.przesunP();
+                    if (event.key.code == sf::Keyboard::Left)
+                        gameover.przesunL();
+
+                    if (event.key.code == sf::Keyboard::Enter)
+                    {
+                        int sel = gameover.getSelectedItem();
+                        if (sel == 0)
+                        {
+                            currentState = GameState::Menu;
+                        }
+                        else if (sel == 1)
+                        {
+                            window.close();
+                        }
+                    }
+                }
+            }
         }
+
 
         if (currentState == GameState::Playing)
         {
             game.update(dt);
             if (game.isGameOver())
             {
-                currentState = GameState::Menu;
+                gameover.setScore(game.getScore());
+                currentState = GameState::GameOver;
             }
         }
 
@@ -124,6 +145,10 @@ int main()
         else if (currentState == GameState::Scores)
         {
             menu.draw(window);
+        }
+        else if (currentState == GameState::GameOver)
+        {
+            gameover.draw(window);
         }
 
         window.display();

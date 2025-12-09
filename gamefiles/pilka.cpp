@@ -1,5 +1,5 @@
 #include "pilka.h"
-#include <cmath>
+
 
 Pilka::Pilka(float x_in, float y_in, float vx_in, float vy_in, float r_in)
     : x(x_in),
@@ -39,8 +39,8 @@ void Pilka::collideWalls(float width, float height){
         bounceX();
     }
 
-    if (y - radius <= 0.f) {
-        y = radius;
+    if (y - radius <= (height / 11.f)) {
+        y = radius + (height / 11.f);
         bounceY();
     }
     shape.setPosition(x, y);
@@ -50,7 +50,7 @@ bool Pilka::collidePaddle(const Paletka& p){
     if ( x < p.getX() - p.getSzerokosc() / 2.f || x > p.getX() + p.getSzerokosc() / 2.f){
         return false;
     }
-    //Dla czytelności nowa zmienna lokalna
+
     const float palTop = p.getY() - p.getWysokosc() / 2.f;
 
     if ((y + radius) >= palTop && (y - radius) < palTop){
@@ -69,6 +69,7 @@ void Pilka::draw(sf::RenderTarget& target){
 bool Pilka::collideBlock(Stone& blk){
     if (x - radius <= blk.getX() + blk.getSzerokosc() / 2.f && x + radius >= blk.getX() - blk.getSzerokosc() / 2.f){
         if (y + radius >= blk.getY() - blk.getWysokosc() / 2.f && y - radius <= blk.getY() + blk.getWysokosc() / 2.f){
+
             return true;
         }
     }
@@ -77,11 +78,11 @@ bool Pilka::collideBlock(Stone& blk){
 
 float Pilka::getX() const { return x; }
 float Pilka::getY() const { return y; }
-sf::Vector2f Pilka::getPosition() const { return sf::Vector2f(x, y); }
+float Pilka::getRadius() const { return radius; }
 float Pilka::getVx() const { return vx; }
 float Pilka::getVy() const { return vy; }
 sf::Vector2f Pilka::getVelocity() const { return sf::Vector2f(vx, vy); }
-float Pilka::getRadius() const { return radius; }
+sf::Vector2f Pilka::getPosition() const { return sf::Vector2f(x, y); }
 
 void Pilka::setPosition(const sf::Vector2f& pos)
 {

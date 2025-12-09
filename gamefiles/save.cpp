@@ -26,8 +26,6 @@ void Save::capture(
     for (const Stone& stone : stones)
     {
         BlockData data;
-        // convert stone center coordinates to top-left so saved positions match
-        // the positions used when recreating RectangleShape (which expects top-left)
         data.w  = stone.getSzerokosc();
         data.h  = stone.getWysokosc();
         data.x  = stone.getX() - data.w / 2.f;
@@ -38,24 +36,24 @@ void Save::capture(
     }
 }
 
-void Save::saveToFile(const std::string& filename)
+bool Save::saveToFile(const std::string& filename)
 {
     std::ofstream file(filename);
-    if (!file.is_open()) return;
-    //Zapis Paletki
+    if (!file.is_open()){
+        return false;
+    }
+
     file << paddlePosition.x << ' ' << paddlePosition.y << '\n';
-    //Zapis Piłki
     file << ballPosition.x << ' ' << ballPosition.y << ' ' << ballVelocity.x << ' ' << ballVelocity.y << '\n';
-    //Zapis liczby bloków
-    file << blocks.size() << '\n';
-    //Zapis bloków
+    file << blocks.size() << std::endl;
+
     for (const auto& block : blocks)
     {
-        file << block.x << ' ' << block.y << ' ' << block.hp << '\n';
+        file << block.x << ' ' << block.y << ' ' << block.w << ' ' << block.h << ' ' << block.hp << '\n';;
     }
 
     file.close();
-    return;
+    return true;
 }
 
 bool Save::loadFromFile(const std::string& filename)
@@ -63,20 +61,17 @@ bool Save::loadFromFile(const std::string& filename)
     std::ifstream file(filename);
     if (!file.is_open()) return false;
 
-    //Wczytanie Paletki
     file >> paddlePosition.x >> paddlePosition.y;
-    //Wczytanie Piłki
     file >> ballPosition.x >> ballPosition.y >> ballVelocity.x >> ballVelocity.y;
-    //Wczytanie liczby bloków
     int numBlocks;
     file >> numBlocks;
-    //Wczytanie bloków
+
     blocks.clear();
     blocks.reserve(numBlocks);
     for (int i = 0; i < numBlocks; ++i)
     {
         BlockData data;
-        file >> data.x >> data.y >> data.hp;
+        file >> data.x >> data.y >> data.w >> data.h >> data.hp;
         blocks.push_back(data);
     }
 
@@ -93,10 +88,9 @@ void Save::apply(Paletka& paddle, Pilka& ball, std::vector<Stone>& stones) const
 
     stones.clear();
     stones.reserve(blocks.size());
-    const sf::Vector2f blockSize(60.f, 20.f);
 
     for (const auto& data : blocks)
     {
-        stones.emplace_back(sf::Vector2f(data.x, data.y), blockSize, data.hp);
+        stones.emplace_back(sf::Vector2f(data.x, data.y), sf::Vector2f(data.w, data.h), data.hp);
     }
 }

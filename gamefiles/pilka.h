@@ -8,7 +8,6 @@
 class Pilka
 {
 public:
-    // Constructor will be implemented in pilka.cpp
     Pilka(float x_in, float y_in, float vx_in, float vy_in, float r_in);
 
     void move();
@@ -19,18 +18,17 @@ public:
     bool collidePaddle(const Paletka& p);
     void draw(sf::RenderTarget& target);
 
-    // Individual components
     float getX() const;
     float getY() const;
     float getVx() const;
     float getVy() const;
     float getRadius() const;
 
-    // Convenient vector getters (used by GameState and elsewhere)
+
     sf::Vector2f getPosition() const;
     sf::Vector2f getVelocity() const;
 
-    // Minimal setters to support loading saved state
+
     void setPosition(const sf::Vector2f& pos);
     void setVelocity(const sf::Vector2f& vel);
 

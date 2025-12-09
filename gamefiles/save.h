@@ -1,5 +1,4 @@
 #pragma once
-
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
@@ -19,7 +18,7 @@ class Save {
 public:
 
     void capture(const Paletka& paddle, const Pilka& ball, const std::vector<Stone>& stones);
-    void saveToFile(const std::string& filename);
+    bool saveToFile(const std::string& filename);
     bool loadFromFile(const std::string& filename);
 
     // Match implementation in save.cpp

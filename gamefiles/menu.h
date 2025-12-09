@@ -5,7 +5,7 @@
 #include <iostream>
 #include <vector>
 
-#define MAX_LICZBA_POZIOMOW 4
+#define MAX_LICZBA_POZIOMOW 3
 
 // Menu class - header + inline implementations.
 // NOTE: This header no longer contains a main() function or any top-level execution code.
@@ -18,6 +18,8 @@ private:
     int selectedItem = 0;
     bool fontLoaded = false;
     sf::RectangleShape entries[MAX_LICZBA_POZIOMOW];
+    sf::Texture TitleTexture;
+    sf::Sprite TitleSprite;
 
 public:
     Menu(float width, float height);
@@ -42,7 +44,8 @@ Menu::Menu(float width, float height)
 {
     // Spróbuj kilku standardowych ścieżek do czcionki
     const std::vector<std::string> candidates = {
-        "arial.ttf",
+        "./fonts/arial.ttf",
+
     };
 
     for (const auto& path : candidates)
@@ -71,42 +74,54 @@ Menu::Menu(float width, float height)
             entries[i].setPosition(width / 3.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * (i + 1) - size.y / 2.f);
         }
         // highlight currently selected entry
-        entries[selectedItem].setFillColor(sf::Color::Cyan);
+        entries[selectedItem].setFillColor(sf::Color(144, 238, 144));
         return;
     }
 
     // rysowanie elementow menu (czcionka załadowana)
     menu[0].setFont(font);
-    menu[0].setFillColor(sf::Color::Cyan);
-    menu[0].setString("Nowa gra");
-    menu[0].setPosition(sf::Vector2f(width / 3.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 1.f));
+    menu[0].setFillColor(sf::Color(144, 238, 144));
+    menu[0].setString("New Game");
+    menu[0].setPosition(sf::Vector2f(width / 11.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 2.f));
 
     menu[1].setFont(font);
     menu[1].setFillColor(sf::Color::White);
-    menu[1].setString("Wczytaj");
-    menu[1].setPosition(sf::Vector2f(width / 3.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 2.f));
+    menu[1].setString("Load Save");
+    menu[1].setPosition(sf::Vector2f(width / 11.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 2.5f));
+
+    //menu[3].setFont(font);
+    //menu[3].setFillColor(sf::Color::White);
+    //menu[3].setString("Best Score: ");
+    //menu[3].setPosition(sf::Vector2f(width / 11.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 3.5f));
 
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
-    menu[2].setString("Ostatnie wyniki");
-    menu[2].setPosition(sf::Vector2f(width / 3.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 3.f));
-
-    menu[3].setFont(font);
-    menu[3].setFillColor(sf::Color::White);
-    menu[3].setString("Wyjscie");
-    menu[3].setPosition(sf::Vector2f(width / 3.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 4.f));
+    menu[2].setString("Exit");
+    menu[2].setPosition(sf::Vector2f(width / 11.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 3.f));
 
     // Ensure the initially selected item is styled
     if (selectedItem >= 0 && selectedItem < MAX_LICZBA_POZIOMOW)
     {
-        menu[selectedItem].setFillColor(sf::Color::Cyan);
+        menu[selectedItem].setFillColor(sf::Color(144, 238, 144));
         menu[selectedItem].setStyle(sf::Text::Bold);
+    }
+
+    if (!TitleTexture.loadFromFile("./textures/title.png"))
+        {
+            std::cerr << "tekstura tytuł?";
+        }
+    else
+    {
+        TitleSprite.setTexture(TitleTexture);
+        TitleSprite.setScale(3.f, 3.f);
+        TitleSprite.setPosition(sf::Vector2f(width / 11.f, height / 11.f));
     }
 }
 
 // rysowanie menu w biezacym oknie
 void Menu::draw(sf::RenderWindow &window)
 {
+    window.draw(TitleSprite);
     if (fontLoaded)
     {
         for (int i = 0; i < MAX_LICZBA_POZIOMOW; i++)
@@ -135,7 +150,7 @@ void Menu::przesunG()
         selectedItem--;
         if (selectedItem < 0)
             selectedItem = MAX_LICZBA_POZIOMOW - 1;
-        menu[selectedItem].setFillColor(sf::Color::Cyan);
+        menu[selectedItem].setFillColor(sf::Color(144, 238, 144));
         menu[selectedItem].setStyle(sf::Text::Bold);
     }
 }
@@ -149,7 +164,7 @@ void Menu::przesunD()
         selectedItem++;
         if (selectedItem >= MAX_LICZBA_POZIOMOW)
             selectedItem = 0;
-        menu[selectedItem].setFillColor(sf::Color::Cyan);
+        menu[selectedItem].setFillColor(sf::Color(144, 238, 144));
         menu[selectedItem].setStyle(sf::Text::Bold);
     }
 }

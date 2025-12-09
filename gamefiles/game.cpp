@@ -3,9 +3,11 @@
 
 #include "game.h"
 #include "save.h"
-#include <SFML/System/Vector2.hpp>
 #include <algorithm>
+#include <cstdlib>
 #include <iostream>
+#include <SFML/Graphics.hpp>
+
 
 Game::Game()
     : m_WIDTH(640.f),
@@ -17,7 +19,7 @@ Game::Game()
       m_ROZMIAR_BLOKU_Y(20.f),
 
       m_paletka(m_WIDTH / 2.f, m_HEIGHT - 40.f, 100.f, 20.f, 8.f),
-      m_pilka(m_WIDTH / 2.f, m_HEIGHT / 2.f - 40.f, 4, 3, 8),
+      m_pilka(m_WIDTH / 2.f, m_HEIGHT / 1.5f- 40.f, 4, 3, 8),
       m_dtCounter(0),
       m_gameOver(false)
 {
@@ -27,13 +29,9 @@ Game::Game()
 
 void Game::setWindowSize(float width, float height)
 {
-
+    m_score = 0;
     m_WIDTH = width;
     m_HEIGHT = height;
-
-
-    m_paletka = Paletka(m_WIDTH / 2.f, m_HEIGHT - 40.f, 100.f, 20.f, 8.f);
-    m_pilka = Pilka(m_WIDTH / 2.f, m_HEIGHT / 2.f - 40.f, 4, 3, 8);
 
     blockRender();
 }
@@ -44,9 +42,8 @@ void Game::reset()
     m_gameOver = false;
     m_dtCounter = 0;
 
-
     m_paletka = Paletka(m_WIDTH / 2.f, m_HEIGHT - 40.f, 100.f, 20.f, 8.f);
-    m_pilka = Pilka(m_WIDTH / 2.f, m_HEIGHT / 2.f - 40.f, 4, 3, 8);
+    m_pilka = Pilka(m_WIDTH / 2.f, m_HEIGHT / 1.5f - 40.f, 4, 3, 8);
 
     blockRender();
 }
@@ -58,11 +55,13 @@ void Game::update(sf::Time dt)
 
 
     m_pilka.move();
+    scoreCounter();
 
 
     if (m_pilka.getY() - m_pilka.getRadius() > m_HEIGHT)
     {
         std::cout << "MISS! KONIEC GRY\n";
+
         m_gameOver = true;
         return;
     }
@@ -91,10 +90,12 @@ void Game::update(sf::Time dt)
         std::remove_if(m_bloki.begin(), m_bloki.end(), [](const Stone &s) { return s.isDestroyed(); }),
         m_bloki.end());
 
+    if (m_bloki.empty())
+    {
+        reset();
+    }
 
     sterowanie();
-
-
     debug();
 }
 
@@ -130,7 +131,7 @@ void Game::blockRender()
         for (int x = 0; x < m_ILOSC_KOLUMN; ++x)
         {
             float posX = x * (blockW + spacing);
-            float posY = y * (blockH + spacing);
+            float posY = y * (blockH + spacing) + (m_WIDTH / 11.f);
             int L = (y < 1) ? 3 : (y < 3) ? 2 : 1;
             m_bloki.emplace_back(sf::Vector2f(posX, posY), sf::Vector2f(blockW, blockH), L);
         }
@@ -158,13 +159,18 @@ void Game::sterowanie()
         m_paletka.moveRight();
     }
     m_paletka.clampToBounds(m_WIDTH);
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
-    {
-        Save s;
-        s.capture(m_paletka, m_pilka, m_bloki);
-        s.saveToFile("save.txt");
-        std::cout << "Zapisano stan gry do pliku save.txt" << std::endl;
-    }
+    bool saveKeyNow = sf::Keyboard::isKeyPressed(sf::Keyboard::P);
+        if (saveKeyNow && !m_saveKeyPrev)
+        {
+            Save s;
+            s.capture(m_paletka, m_pilka, m_bloki);
+            if (s.saveToFile("./data/save.txt")) {
+                std::cout << "Zapisano stan gry do pliku save.txt\n";
+            } else {
+                std::cout << "Blad zapisu do save.txt\n";
+            }
+        }
+        m_saveKeyPrev = saveKeyNow;
 }
 
 
@@ -176,14 +182,31 @@ void Game::applySave(const Save& state)
     m_bloki.clear();
 
     sf::Vector2f size(m_WIDTH, m_HEIGHT);
-    const float spacing = 2.f;
-    float upperHeight = m_HEIGHT * 0.40f;
-    float blockW = (m_WIDTH - (m_ILOSC_KOLUMN - 1) * spacing) / static_cast<float>(m_ILOSC_KOLUMN);
-    float blockH = (upperHeight - (m_ILOSC_WIERSZY - 1) * spacing) / static_cast<float>(m_ILOSC_WIERSZY);
 
     for (const auto& data : state.getBlocks())
     {
-        // Use the saved block position and size directly when recreating blocks
         m_bloki.emplace_back(sf::Vector2f(data.x, data.y), sf::Vector2f(data.w, data.h), data.hp);
+
     }
+
+
+}
+
+void Game::scoreCounter()
+{
+    for (auto &blk : m_bloki)
+       {
+           if (!blk.isDestroyed() && m_pilka.collideBlock(blk))
+           {
+               if (blk.isDestroyed())
+               {
+                   m_score += 10;
+               }
+               else
+               {
+                   m_score += 5;
+                   printf("Score: %d\n", m_score);
+               }
+           }
+       }
 }
