@@ -39,6 +39,7 @@ int main()
 
             if (currentState == GameState::Menu)
             {
+
                 if (event.type == sf::Event::KeyPressed)
                 {
 
@@ -81,7 +82,7 @@ int main()
             }
             else if (currentState == GameState::Playing)
             {
-                // example: pressing Escape returns to menu
+
                 if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
                 {
                     currentState = GameState::Menu;
@@ -97,6 +98,7 @@ int main()
             }
             else if (currentState == GameState::GameOver)
             {
+
                 if (event.type == sf::Event::KeyPressed)
                 {
                     if (event.key.code == sf::Keyboard::Right)
@@ -109,6 +111,8 @@ int main()
                         int sel = gameover.getSelectedItem();
                         if (sel == 0)
                         {
+                            gameover.setScore(0, false);
+                            game.resetScore();
                             currentState = GameState::Menu;
                         }
                         else if (sel == 1)
@@ -126,7 +130,8 @@ int main()
             game.update(dt);
             if (game.isGameOver())
             {
-                gameover.setScore(game.getScore());
+                bool newRecord = gameover.updateBestScore("./data/bestscore.txt", game.getScore());
+                gameover.setScore(game.getScore(), newRecord);
                 currentState = GameState::GameOver;
             }
         }

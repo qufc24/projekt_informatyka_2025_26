@@ -3,6 +3,7 @@
 
 #include "game.h"
 #include "save.h"
+#include <SFML/Graphics/RenderTarget.hpp>
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
@@ -21,15 +22,39 @@ Game::Game()
       m_paletka(m_WIDTH / 2.f, m_HEIGHT - 40.f, 100.f, 20.f, 8.f),
       m_pilka(m_WIDTH / 2.f, m_HEIGHT / 1.5f- 40.f, 4, 3, 8),
       m_dtCounter(0),
-      m_gameOver(false)
+      m_gameOver(false),
+      m_score(0)
 {
 
     setWindowSize(m_WIDTH, m_HEIGHT);
+
+    const std::vector<std::string> candidates = {
+        "./fonts/BoldPixels.ttf"
+    };
+
+    for (const auto& path : candidates)
+    {
+        if (font.loadFromFile(path))
+        {
+            fontLoaded = true;
+            break;
+        }
+    }
+
+
+    if(fontLoaded)
+    {
+        scoreText.setFont(font);
+        scoreText.setCharacterSize(64);
+        scoreText.setFillColor(sf::Color::White);
+        scoreText.setString("Score: 0");
+        scoreText.setPosition(m_WIDTH / 5.5f - scoreText.getLocalBounds().width / 2.f, (m_HEIGHT / 90.f) - 25.f);
+    }
 }
 
 void Game::setWindowSize(float width, float height)
 {
-    m_score = 0;
+    //m_score = 0;
     m_WIDTH = width;
     m_HEIGHT = height;
 
@@ -38,7 +63,6 @@ void Game::setWindowSize(float width, float height)
 
 void Game::reset()
 {
-
     m_gameOver = false;
     m_dtCounter = 0;
 
@@ -56,6 +80,7 @@ void Game::update(sf::Time dt)
 
     m_pilka.move();
     scoreCounter();
+
 
 
     if (m_pilka.getY() - m_pilka.getRadius() > m_HEIGHT)
@@ -77,12 +102,18 @@ void Game::update(sf::Time dt)
 
     for (auto &blk : m_bloki)
     {
-        if (!blk.isDestroyed() && m_pilka.collideBlock(blk))
+        if (!blk.isDestroyed() && m_pilka.collideBlockY(blk))
         {
             std::cout << "HIT BLOCK\n";
             blk.trafienie();
             m_pilka.bounceY();
         }
+        /*if (!blk.isDestroyed() && m_pilka.collideBlockX(blk))
+        {
+            std::cout << "HIT BLOCK RR\n";
+            blk.trafienie();
+            m_pilka.bounceX();
+        }*/
     }
 
 
@@ -103,6 +134,12 @@ void Game::render(sf::RenderTarget& target)
 {
     m_paletka.draw(target);
     m_pilka.draw(target);
+
+    if (fontLoaded)
+    {
+        displayScore(target);
+    }
+
     for (const auto &blk : m_bloki)
     {
         blk.draw(target);
@@ -113,14 +150,10 @@ void Game::blockRender()
 {
     m_bloki.clear();
 
-
     const float spacing = 2.f;
-
-
     float upperHeight = m_HEIGHT * 0.40f;
-
-    float blockW = (m_WIDTH - (m_ILOSC_KOLUMN - 1) * spacing) / static_cast<float>(m_ILOSC_KOLUMN);
-    float blockH = (upperHeight - (m_ILOSC_WIERSZY - 1) * spacing) / static_cast<float>(m_ILOSC_WIERSZY);
+    float blockW = (m_WIDTH - (m_ILOSC_KOLUMN - 1) * spacing) / m_ILOSC_KOLUMN;
+    float blockH = (upperHeight - (m_ILOSC_WIERSZY - 1) * spacing) / m_ILOSC_WIERSZY;
 
 
     if (blockW < 4.f) blockW = 4.f;
@@ -196,7 +229,7 @@ void Game::scoreCounter()
 {
     for (auto &blk : m_bloki)
        {
-           if (!blk.isDestroyed() && m_pilka.collideBlock(blk))
+           if (m_pilka.collideBlockY(blk) || m_pilka.collideBlockX(blk))
            {
                if (blk.isDestroyed())
                {
@@ -209,4 +242,15 @@ void Game::scoreCounter()
                }
            }
        }
+}
+
+void Game::displayScore(sf::RenderTarget &target)
+{
+    scoreText.setString("Score: " + std::to_string(m_score));
+    target.draw(scoreText);
+}
+
+void Game::resetScore()
+{
+    m_score = 0;
 }

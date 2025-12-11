@@ -4,15 +4,16 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <vector>
+#include <fstream>
 
 #define MAX_LICZBA_POZIOMOW 3
 
-// Menu class - header + inline implementations.
-// NOTE: This header no longer contains a main() function or any top-level execution code.
+
 
 class Menu
 {
 private:
+    sf::Text scoreText;
     sf::Font font;
     sf::Text menu[MAX_LICZBA_POZIOMOW]; // maksymalna liczba poziomow
     int selectedItem = 0;
@@ -36,6 +37,8 @@ public:
 
     // rysuj menu w oknie
     void draw(sf::RenderWindow &window);
+
+    int loadRecord(const std::string& filename);
 };
 
 
@@ -94,10 +97,20 @@ Menu::Menu(float width, float height)
     //menu[3].setString("Best Score: ");
     //menu[3].setPosition(sf::Vector2f(width / 11.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 3.5f));
 
+
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Exit");
     menu[2].setPosition(sf::Vector2f(width / 11.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 3.f));
+
+    if(fontLoaded)
+    {
+        scoreText.setFont(font);
+        scoreText.setFillColor(sf::Color::White);
+        scoreText.setString("Best Score: " + std::to_string(loadRecord("./data/bestscore.txt")));
+        scoreText.setPosition(sf::Vector2f(width / 11.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 3.5f));
+
+    }
 
     // Ensure the initially selected item is styled
     if (selectedItem >= 0 && selectedItem < MAX_LICZBA_POZIOMOW)
@@ -121,6 +134,7 @@ Menu::Menu(float width, float height)
 // rysowanie menu w biezacym oknie
 void Menu::draw(sf::RenderWindow &window)
 {
+    window.draw(scoreText);
     window.draw(TitleSprite);
     if (fontLoaded)
     {
@@ -169,4 +183,20 @@ void Menu::przesunD()
     }
 }
 
+
+int Menu::loadRecord(const std::string& filename)
+{
+    std::ifstream fille(filename);
+    if(!fille)
+        return 0;
+
+    int best_score = 0;
+
+    if (fille) {
+        fille >> best_score;
+    }
+    fille.close();
+
+    return best_score;
+}
 #endif // MENU_H

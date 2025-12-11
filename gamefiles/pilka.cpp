@@ -66,13 +66,35 @@ void Pilka::draw(sf::RenderTarget& target){
     target.draw(shape);
 }
 
-bool Pilka::collideBlock(Stone& blk){
-    if (x - radius <= blk.getX() + blk.getSzerokosc() / 2.f && x + radius >= blk.getX() - blk.getSzerokosc() / 2.f){
-        if (y + radius >= blk.getY() - blk.getWysokosc() / 2.f && y - radius <= blk.getY() + blk.getWysokosc() / 2.f){
+bool Pilka::collideBlockY(Stone& blk){
+    //Lokalne skróty
+    const float blk_left = blk.getX() - blk.getSzerokosc() / 2.f;
+    const float blk_right = blk.getX() + blk.getSzerokosc() / 2.f;
+    const float blk_top = blk.getY() - blk.getWysokosc() / 2.f;
+    const float blk_bottom = blk.getY() + blk.getWysokosc() / 2.f;
 
+    //Dół
+    if (x - radius <= blk_right && x + radius >= blk_left){
+        if ((y + radius >= blk_top && y - radius <= blk_bottom) || (y - radius <= blk_bottom && y + radius >= blk_bottom)){
             return true;
         }
     }
+
+    return false;
+}
+
+bool Pilka::collideBlockX(Stone& blk){
+    //Lokalne skróty
+    const float blk_left = blk.getX() - blk.getSzerokosc() / 2.f;
+    const float blk_right = blk.getX() + blk.getSzerokosc() / 2.f;
+    const float blk_top = blk.getY() - blk.getWysokosc() / 2.f;
+    const float blk_bottom = blk.getY() + blk.getWysokosc() / 2.f;
+
+if (x - radius <= blk_right && x + radius >= blk_left){
+    if ((y + radius >= blk_top && y - radius <= blk_bottom) || (y - radius <= blk_bottom && y + radius >= blk_bottom)){
+        return true;
+    }
+}
     return false;
 }
 

@@ -32,8 +32,8 @@ public:
     void update();
     void przesunP();
     void przesunL();
-    void setScore(int score);
-
+    void setScore(int score, bool newRecord);
+    bool updateBestScore(const std::string& filename, int score);
 
     int getSelectedItem() const { return selectedItem; }
     void draw(sf::RenderWindow &window);

@@ -14,7 +14,8 @@ public:
     void bounceX();
     void bounceY();
     void collideWalls(float width, float height);
-    bool collideBlock(Stone& blk);
+    bool collideBlockY(Stone& blk);
+    bool collideBlockX(Stone& blk);
     bool collidePaddle(const Paletka& p);
     void draw(sf::RenderTarget& target);
 

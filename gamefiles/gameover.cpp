@@ -49,8 +49,8 @@ Gameover::Gameover(float width, float height, Game& game, int lastScore)
         scoreText.setFont(font);
         scoreText.setCharacterSize(64);
         scoreText.setFillColor(sf::Color::White);
-        scoreText.setString("Score: " + std::to_string(lastScore));
-        scoreText.setPosition(width / 2.f - scoreText.getLocalBounds().width / 2.f, (height / 2.f) + 80.f );
+        scoreText.setPosition(width / 4.f - scoreText.getLocalBounds().width, (height / 2.f) + 80.f );
+
     }
     menu[0].setFont(font);
     menu[0].setCharacterSize(64);
@@ -160,14 +160,38 @@ void Gameover::update()
 }
 
 
-void Gameover::setScore(int score)
+void Gameover::setScore(int score, bool newRecord)
 {
-    if (fontLoaded)
-    {
-        scoreText.setString("Score: " + std::to_string(score));
-        scoreText.setPosition(
-            scoreText.getPosition().x,
-            scoreText.getPosition().y
-        );
+    if (!fontLoaded)
+        return;
+
+    if (newRecord){
+        scoreText.setString("New Record: " + std::to_string(score));
     }
+    else{
+        scoreText.setString("Score: " + std::to_string(score));
+
+    }
+
+}
+
+bool Gameover::updateBestScore(const std::string& filename, int score)
+{
+    std::ifstream fille(filename);
+    int best_score = 0;
+
+    if (fille) {
+        fille >> best_score;
+    }
+    fille.close();
+
+    if (score > best_score) {
+        std::ofstream out(filename, std::ios::trunc);
+        if (out) {
+            out << score;
+        }
+        return true;
+    }
+
+    return false;
 }

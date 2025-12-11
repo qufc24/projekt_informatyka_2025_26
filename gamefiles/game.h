@@ -20,7 +20,13 @@ public:
     bool isGameOver() const { return m_gameOver; }
     void applySave(const Save& state);
     void scoreCounter();
+    void displayScore(sf::RenderTarget& target);
+    void resetScore();
     int getScore() const { return m_score; }
+    sf::Text scoreText;
+    bool fontLoaded = false;
+    sf::Font font;
+
 
 
 private:
@@ -28,7 +34,7 @@ private:
     void sterowanie();
     void blockRender();
 
-    int m_score = 0;
+    int m_score;
     float m_WIDTH;
     float m_HEIGHT;
     float m_FrameLimit;
