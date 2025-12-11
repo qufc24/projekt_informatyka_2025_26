@@ -4,7 +4,7 @@
 #include "save.h"
 #include "gameover.h"
 
-enum class GameState { Menu, Playing, Scores, Exiting, GameOver };
+enum class GameState { Menu, Playing, Exiting, GameOver };
 
 int main()
 {
@@ -88,14 +88,6 @@ int main()
                     currentState = GameState::Menu;
                 }
             }
-            else if (currentState == GameState::Scores)
-            {
-                if (event.type == sf::Event::KeyPressed &&
-                    (event.key.code == sf::Keyboard::Escape || event.key.code == sf::Keyboard::Enter))
-                {
-                    currentState = GameState::Menu;
-                }
-            }
             else if (currentState == GameState::GameOver)
             {
 
@@ -146,10 +138,6 @@ int main()
         else if (currentState == GameState::Playing)
         {
             game.render(window);
-        }
-        else if (currentState == GameState::Scores)
-        {
-            menu.draw(window);
         }
         else if (currentState == GameState::GameOver)
         {

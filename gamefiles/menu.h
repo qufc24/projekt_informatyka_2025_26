@@ -92,12 +92,6 @@ Menu::Menu(float width, float height)
     menu[1].setString("Load Save");
     menu[1].setPosition(sf::Vector2f(width / 11.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 2.5f));
 
-    //menu[3].setFont(font);
-    //menu[3].setFillColor(sf::Color::White);
-    //menu[3].setString("Best Score: ");
-    //menu[3].setPosition(sf::Vector2f(width / 11.f, height / (MAX_LICZBA_POZIOMOW + 1.f) * 3.5f));
-
-
     menu[2].setFont(font);
     menu[2].setFillColor(sf::Color::White);
     menu[2].setString("Exit");

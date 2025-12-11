@@ -73,14 +73,10 @@ bool Pilka::collideBlockY(Stone& blk){
     const float blk_top = blk.getY() - blk.getWysokosc() / 2.f;
     const float blk_bottom = blk.getY() + blk.getWysokosc() / 2.f;
 
-    //Dół
-    if (x - radius <= blk_right && x + radius >= blk_left){
-        if ((y + radius >= blk_top && y - radius <= blk_bottom) || (y - radius <= blk_bottom && y + radius >= blk_bottom)){
-            return true;
-        }
-    }
+    bool fromtop = y + radius >= blk_top && y - radius <= blk_bottom;
+    bool frombottom = y - radius <= blk_bottom && y + radius >= blk_bottom;
 
-    return false;
+    return ((x - radius <= blk_right && x + radius >= blk_left) &&(fromtop || frombottom));
 }
 
 bool Pilka::collideBlockX(Stone& blk){
@@ -90,21 +86,8 @@ bool Pilka::collideBlockX(Stone& blk){
     const float blk_top = blk.getY() - blk.getWysokosc() / 2.f;
     const float blk_bottom = blk.getY() + blk.getWysokosc() / 2.f;
 
-if (x - radius <= blk_right && x + radius >= blk_left){
-    if ((y + radius >= blk_top && y - radius <= blk_bottom) || (y - radius <= blk_bottom && y + radius >= blk_bottom)){
-        return true;
-    }
+    return ((x - radius <= blk_right && x + radius >= blk_left) && (y >= blk_top && y <= blk_bottom));
 }
-    return false;
-}
-
-float Pilka::getX() const { return x; }
-float Pilka::getY() const { return y; }
-float Pilka::getRadius() const { return radius; }
-float Pilka::getVx() const { return vx; }
-float Pilka::getVy() const { return vy; }
-sf::Vector2f Pilka::getVelocity() const { return sf::Vector2f(vx, vy); }
-sf::Vector2f Pilka::getPosition() const { return sf::Vector2f(x, y); }
 
 void Pilka::setPosition(const sf::Vector2f& pos)
 {
@@ -118,3 +101,11 @@ void Pilka::setVelocity(const sf::Vector2f& vel)
     vx = vel.x;
     vy = vel.y;
 }
+
+float Pilka::getX() const { return x; }
+float Pilka::getY() const { return y; }
+float Pilka::getRadius() const { return radius; }
+float Pilka::getVx() const { return vx; }
+float Pilka::getVy() const { return vy; }
+sf::Vector2f Pilka::getVelocity() const { return sf::Vector2f(vx, vy); }
+sf::Vector2f Pilka::getPosition() const { return sf::Vector2f(x, y); }

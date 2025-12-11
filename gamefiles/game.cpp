@@ -85,35 +85,27 @@ void Game::update(sf::Time dt)
 
     if (m_pilka.getY() - m_pilka.getRadius() > m_HEIGHT)
     {
-        std::cout << "MISS! KONIEC GRY\n";
-
         m_gameOver = true;
         return;
     }
 
     m_pilka.collideWalls(m_WIDTH, m_HEIGHT);
-
-
-    if (m_pilka.collidePaddle(m_paletka))
-    {
-        std::cout << "HIT PADDLE\n";
-    }
-
+    m_pilka.collidePaddle(m_paletka);
 
     for (auto &blk : m_bloki)
     {
-        if (!blk.isDestroyed() && m_pilka.collideBlockY(blk))
+
+        if (!blk.isDestroyed() && m_pilka.collideBlockX(blk))
         {
-            std::cout << "HIT BLOCK\n";
+            blk.trafienie();
+            m_pilka.bounceX();
+        }
+        //priorytowanie odbić w osi X, w celu uniknięcia wielokrotnego odbicia
+        if (!blk.isDestroyed() && m_pilka.collideBlockY(blk) && !m_pilka.collideBlockX(blk))
+        {
             blk.trafienie();
             m_pilka.bounceY();
         }
-        /*if (!blk.isDestroyed() && m_pilka.collideBlockX(blk))
-        {
-            std::cout << "HIT BLOCK RR\n";
-            blk.trafienie();
-            m_pilka.bounceX();
-        }*/
     }
 
 
@@ -127,7 +119,7 @@ void Game::update(sf::Time dt)
     }
 
     sterowanie();
-    debug();
+    //debug();
 }
 
 void Game::render(sf::RenderTarget& target)
@@ -209,6 +201,7 @@ void Game::sterowanie()
 
 void Game::applySave(const Save& state)
 {
+    m_gameOver = false;
     m_paletka.setPosition(state.getPaddlePosition());
     m_pilka.setPosition(state.getBallPosition());
     m_pilka.setVelocity(state.getBallVelocity());
@@ -238,7 +231,6 @@ void Game::scoreCounter()
                else
                {
                    m_score += 5;
-                   printf("Score: %d\n", m_score);
                }
            }
        }
