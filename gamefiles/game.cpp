@@ -4,8 +4,7 @@
 #include "game.h"
 #include "save.h"
 #include <SFML/Graphics/RenderTarget.hpp>
-#include <algorithm>
-#include <cstdlib>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
@@ -41,6 +40,11 @@ Game::Game()
         }
     }
 
+
+    if (!buffer.loadFromFile("./sounds/point.mp3"))
+        std::cerr << "Błąd wczytywania dźwięku";
+
+    sound.setBuffer(buffer);
 
     if(fontLoaded)
     {
@@ -98,12 +102,14 @@ void Game::update(sf::Time dt)
         if (!blk.isDestroyed() && m_pilka.collideBlockX(blk))
         {
             blk.trafienie();
+            sound.play();
             m_pilka.bounceX();
         }
         //priorytowanie odbić w osi X, w celu uniknięcia wielokrotnego odbicia
         if (!blk.isDestroyed() && m_pilka.collideBlockY(blk) && !m_pilka.collideBlockX(blk))
         {
             blk.trafienie();
+            sound.play();
             m_pilka.bounceY();
         }
     }
@@ -224,6 +230,7 @@ void Game::scoreCounter()
        {
            if (m_pilka.collideBlockY(blk) || m_pilka.collideBlockX(blk))
            {
+
                if (blk.isDestroyed())
                {
                    m_score += 10;

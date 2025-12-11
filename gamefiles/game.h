@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <vector>
 #include "pilka.h"
 
@@ -26,6 +27,8 @@ public:
     sf::Text scoreText;
     bool fontLoaded = false;
     sf::Font font;
+    sf::SoundBuffer buffer;
+    sf::Sound sound;
 
 
 

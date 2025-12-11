@@ -1,50 +1,61 @@
-#projekt_informatyka_2025_26
+# projekt_informatyka_2025_26
 
-Prosty projekt w języku C++ przy użyciu biblioteki SFML 2.6.x na potrzeby zajęć projekt informatyka II
+Prosty projekt w języku C++ z wykorzystaniem biblioteki **SFML 2.6.x**, przygotowany na zajęcia z informatyki II.
 
-Opis:
-Projekt "arkanoid", to prosta w zamysle gra wideo polegająca na sterowaniu paletką przy użyciu strzałek w celu odbijania piłki i zdobywania punktów poprzez trafianie/niszczenie bloczków. Gra zawiera mechanikę: 
-- Sterowanie paletką
+## Opis projektu
+
+"Arkanoid" to klasyczna gra wideo, w której gracz steruje paletką przy użyciu klawiszy strzałek, odbija piłkę i zdobywa punkty poprzez niszczenie bloczków.  
+Projekt zawiera następujące elementy:
+
+- Sterowanie paletką (lewo/prawo)
 - Odbijanie piłki
-- Zdobywanie punktów
-- Zapisywania najlepszego wyniku
-- Niszczenie bloczków
-- Zapisywania stanu gry pod przyciskiem "P" (zapisuje tylko jeden stan gry, nie wspiera wielokrotnego zapisywania stanu gry)
+- System punktów
+- Zapisywanie najlepszego wyniku
+- Niszczenie bloczków o różnej wytrzymałości
+- Zapis stanu gry pod klawiszem **P** (obsługuje maksymalnie jeden slot)
 - Wczytywanie zapisu
-- "Game loop" - po zniszczeniu wszystkich bloczków program renderuje na nowo bloczki nie resetując przytym zdobytych punktów
-- Stosuje proste grafiki i animacjie
-- 3 różne stany gry
+- Pętlę gry — po zniszczeniu wszystkich bloczków blokowisko generowane jest ponownie bez resetowania punktów
+- Proste grafiki i animacje 
+- Trzy różne stany gry
+- Efekty dźwiękowe  
+  (źródło audio: https://pixabay.com/sound-effects/game-bonus-02-294436/ )
 
-## Instalacja i Uruchomienie
+## Instalacja i uruchomienie
 
-1.  **Zainstaluj zależności:**
-    *   Kompilator C++ (np. GCC/g++).
-    *   CMake (wersja 3.10 lub nowsza).
-    *   Bibliotekę **SFML** w wersji **2.6.x**.
+1. **Zainstaluj zależności:**
+   - Kompilator C++ (np. GCC/g++)
+   - CMake (3.10+)
+   - Biblioteka SFML w wersji 2.6.x
 
-2.  **Sklonuj repozytorium**.
-    ```bash
-    git clone https://github.com/username/projekt_informatyka_2025_26.git
-    ```
+2. **Sklonuj repozytorium:**
+   ```bash
+   git clone https://github.com/qufc24/projekt_informatyka_2025_26.git
+```
 
-3.  **Utwórz katalog `build`** i przejdź do niego:
-    ```bash
-    mkdir build
-    cd build
-    ```
+3. **Utwórz katalog build i przejdź do niego:**
+   ```bash
+   mkdir build
+   cd build
+```
 
-4.  **Skonfiguruj projekt** za pomocą CMake:
-    ```bash
-    cmake ..
-    ```
+4. **Wygeneruj pliki projektu:**
+   ```bash
+   cmake ..
+```
+5. **Skompiluj projekt:**
+   ```bash
+   cmake --build .
+```
 
-5.  **Skompiluj projekt**:
-    ```bash
-    cmake --build .
-    ```
+6. **Uruchom grę:**
+   ```bash
+   ./arkanoid
+```
 
-6.  **Uruchom grę**:
-    Plik wykonywalny `arkanoid` znajdzie się w katalogu `build`.
-    ```bash
-    ./arkanoid
-    ```
+
+Zgodnie z wytycznymi wykorzystania narzędzi GenAI w procesie kształcenia na Politechnice
+Gdańskiej, dla narzędzi GenAI potencjalnie NISKIEGO stopnia ingerencji w prace studenta: oświadczam, że treści wygenerowane przy pomocy GenAI poddałem krytycznej analizie i zweryfikowałem. 
+
+Użycie narzędzi GenAI w tym projekcie sprowadziło się głównie do: 
+- lokalizacji i zrozumienia błędów w kodzie
+- utworzenia README.md oraz CMakeLists.txt
