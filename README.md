@@ -50,7 +50,7 @@ Projekt zawiera następujące elementy:
 6. **Uruchom grę:**
    ```bash
    ./arkanoid
-```
+
 
 
 Zgodnie z wytycznymi wykorzystania narzędzi GenAI w procesie kształcenia na Politechnice
